@@ -20,31 +20,8 @@ const Item = styled(Paper)(({theme}) => ({
 
 const App: React.FC = observer(() => {
 
-  const requestCoins = async () => {
-    try {
-      const data = await fetch(
-        "https://min-api.cryptocompare.com/data/top/totalvolfull?limit=10&tsym=USD"
-      );
-      const {Data} = await data.json();
-      const coins: ICoin[] = Data.map((coin: any) => {
-        const obj: ICoin = {
-          name: coin.CoinInfo.Name,
-          fullName: coin.CoinInfo.FullName,
-          imageUrl: `https://cryptocompare.com${coin.CoinInfo.ImageUrl}`,
-          price: coin.RAW.USD.PRICE.toFixed(2),
-          volume24hour: coin.RAW.USD.VOLUME24HOUR.toFixed(2),
-        };
-        return obj;
-      });
-      currency.getCarrencyFromApi(coins);
-    } catch (e) {
-      console.log("---e", e);
-      return e;
-    }
-  };
-
   React.useEffect(() => {
-    requestCoins();
+    currency.getCarrencyFromApi();
   }, []);
 
   console.log("---render", JSON.parse(JSON.stringify(currency.currency)));

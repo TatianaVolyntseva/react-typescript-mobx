@@ -9,8 +9,27 @@ class StoreCurrency {
   }
 
   @action
-  getCarrencyFromApi(payload: ICoin[]) {
-    this.currency.push(...payload);
+  async getCarrencyFromApi  () {
+    try {
+      const data = await fetch(
+        "https://min-api.cryptocompare.com/data/top/totalvolfull?limit=10&tsym=USD"
+      );
+      const {Data} = await data.json();
+      const coins: ICoin[] = Data.map((coin: any) => {
+        const obj: ICoin = {
+          name: coin.CoinInfo.Name,
+          fullName: coin.CoinInfo.FullName,
+          imageUrl: `https://cryptocompare.com${coin.CoinInfo.ImageUrl}`,
+          price: coin.RAW.USD.PRICE.toFixed(2),
+          volume24hour: coin.RAW.USD.VOLUME24HOUR.toFixed(2),
+        };
+        return obj;
+      });
+      this.currency=[...coins];
+    } catch (e) {
+      console.log("---e", e);
+      return e;
+    }
   }
 
   @computed
